@@ -113,6 +113,7 @@ a svg {
   border: 0;
   border-radius: 50%;
   background: transparent;
+  cursor: default;
   line-height: 0;
 }
 .admin-avatar-trigger img {
