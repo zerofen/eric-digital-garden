@@ -1,0 +1,15 @@
+{
+  "name": "Eric",
+  "title": "Eric's Garden",
+  "url": "https://eric.sryze.cc",
+  "description": "Eric 的数字花园，记录学习、生活，以及一路生长的想法。",
+  "greeting": "你好，欢迎来到我的一小片互联网",
+  "headline": "HI, I'M ERIC",
+  "motto": "保持好奇，慢慢生长。",
+  "intro": "把日常写成片段，把想法种成花园。",
+  "avatar": "/avatar.svg",
+  "avatarAlt": "Eric 的 E 字母头像",
+  "since": 2026,
+  "email": "",
+  "github": ""
+}

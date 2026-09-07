@@ -1,0 +1,22 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "eric-garden",
+  "main": "../worker/index.mjs",
+  "compatibility_date": "2026-09-07",
+  "assets": {
+    "directory": "../dist/client",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+  },
+  "routes": [
+    {
+      "pattern": "eric.sryze.cc",
+      "custom_domain": true,
+    },
+  ],
+  "vars": {
+    "GITHUB_OWNER": "zerofen",
+    "GITHUB_REPO": "eric-digital-garden",
+    "GITHUB_BRANCH": "main",
+  },
+}
