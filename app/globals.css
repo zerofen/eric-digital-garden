@@ -1218,12 +1218,17 @@ nav a[aria-current]::after {
   backdrop-filter: blur(10px);
 }
 .admin-dialog {
+  position: relative;
+  inset: auto;
   width: min(1120px, 100%);
   height: min(760px, calc(100svh - 56px));
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   border: 1px solid #d9ded4;
   border-radius: 12px;
   background: #fcfaf7;
+  color: inherit;
   box-shadow: 0 32px 90px #16211d4d;
 }
 .admin-header {

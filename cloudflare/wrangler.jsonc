@@ -3,6 +3,11 @@
   "name": "eric-garden",
   "main": "../worker/index.mjs",
   "compatibility_date": "2026-09-07",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
   "assets": {
     "directory": "../dist/client",
     "binding": "ASSETS",

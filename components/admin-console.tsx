@@ -24,13 +24,13 @@ class AdminApiError extends Error {
 }
 
 async function adminRequest<T>(path: string, init?: RequestInit): Promise<T> {
+  const headers = new Headers(init?.headers);
+  if (init?.body && !headers.has('Content-Type'))
+    headers.set('Content-Type', 'application/json');
   const response = await fetch(`/api/admin${path}`, {
     ...init,
     credentials: 'same-origin',
-    headers: {
-      ...(init?.body ? { 'Content-Type': 'application/json' } : {}),
-      ...init?.headers,
-    },
+    headers,
   });
   const payload = (await response.json().catch(() => ({}))) as T & ApiErrorBody;
   if (!response.ok)
@@ -87,13 +87,12 @@ export function AdminConsole({
 
   useEffect(() => {
     if (!open) return;
-    void loadPosts();
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
     document.addEventListener('keydown', closeOnEscape);
     return () => document.removeEventListener('keydown', closeOnEscape);
-  }, [loadPosts, open]);
+  }, [open]);
 
   function handleAvatarClick() {
     const now = Date.now();
@@ -104,9 +103,10 @@ export function AdminConsole({
     if (clickTimes.current.length < 5) return;
     clickTimes.current = [];
     setOpen(true);
+    void loadPosts();
   }
 
-  async function login(event: React.FormEvent<HTMLFormElement>) {
+  async function login(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage('');
@@ -150,7 +150,7 @@ export function AdminConsole({
     setMessage('新文章默认是草稿，保存后不会立即出现在公开页面。');
   }
 
-  async function savePost(event: React.FormEvent<HTMLFormElement>) {
+  async function savePost(event: React.SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     setBusy(true);
     setMessage('');
@@ -225,9 +225,9 @@ export function AdminConsole({
       </button>
       {open ? (
         <div className="admin-overlay" role="presentation">
-          <section
+          <dialog
+            open
             className="admin-dialog"
-            role="dialog"
             aria-modal="true"
             aria-label="博客管理员"
           >
@@ -368,7 +368,7 @@ export function AdminConsole({
                 </main>
               </div>
             )}
-          </section>
+          </dialog>
         </div>
       ) : null}
     </>

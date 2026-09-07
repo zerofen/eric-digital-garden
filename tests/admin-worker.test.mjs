@@ -86,3 +86,27 @@ test('登录接口签发 HttpOnly 会话且不会返回密码', async () => {
   );
   assert.doesNotMatch(body, /test-password/);
 });
+
+test('管理接口拒绝超限请求体并返回 413', async () => {
+  const response = await worker.fetch(
+    new Request('https://eric.sryze.cc/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': String(2 * 1024 * 1024),
+        Origin: 'https://eric.sryze.cc',
+      },
+      body: '{}',
+    }),
+    {
+      ADMIN_PASSWORD: 'test-password',
+      SESSION_SECRET: 'a-long-test-session-secret',
+      GITHUB_TOKEN: 'unused-in-login-test',
+      GITHUB_OWNER: 'test-owner',
+      GITHUB_REPO: 'test-repository',
+    },
+  );
+
+  assert.equal(response.status, 413);
+  assert.deepEqual(await response.json(), { error: '请求内容过大。' });
+});

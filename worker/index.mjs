@@ -5,6 +5,12 @@ const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+function requestError(message, status = 400) {
+  const error = new Error(message);
+  error.status = status;
+  return error;
+}
+
 function apiHeaders() {
   return {
     'Cache-Control': 'no-store',
@@ -126,20 +132,20 @@ function frontmatterValue(frontmatter, name) {
 
 export function validatePostInput(slug, source) {
   if (!SLUG_PATTERN.test(slug || ''))
-    throw new Error('文件名只能包含小写英文、数字和短横线。');
+    throw requestError('文件名只能包含小写英文、数字和短横线。');
   if (typeof source !== 'string' || !source.trim())
-    throw new Error('文章内容不能为空。');
+    throw requestError('文章内容不能为空。');
   if (encoder.encode(source).length > MAX_SOURCE_BYTES)
-    throw new Error('单篇文章不能超过 1 MB。');
+    throw requestError('单篇文章不能超过 1 MB。', 413);
   const match = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]+)$/);
-  if (!match) throw new Error('文章必须包含完整的 YAML 信息块和正文。');
+  if (!match) throw requestError('文章必须包含完整的 YAML 信息块和正文。');
   for (const name of ['title', 'description', 'date']) {
     if (!frontmatterValue(match[1], name))
-      throw new Error(`文章缺少 ${name}。`);
+      throw requestError(`文章缺少 ${name}。`);
   }
   const date = frontmatterValue(match[1], 'date');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date)))
-    throw new Error('date 必须使用 YYYY-MM-DD 格式。');
+    throw requestError('date 必须使用 YYYY-MM-DD 格式。');
   return true;
 }
 
@@ -227,16 +233,38 @@ async function listPosts(env) {
 }
 
 async function readJson(request) {
+  const limit = MAX_SOURCE_BYTES + 20_000;
   const declaredLength = Number(request.headers.get('Content-Length') || 0);
-  if (declaredLength > MAX_SOURCE_BYTES + 20_000)
-    throw new Error('请求内容过大。');
-  const text = await request.text();
-  if (text.length > MAX_SOURCE_BYTES + 20_000)
-    throw new Error('请求内容过大。');
+  if (Number.isFinite(declaredLength) && declaredLength > limit)
+    throw requestError('请求内容过大。', 413);
+
+  // Content-Length may be absent. Count bytes while streaming so an oversized
+  // request is rejected before the whole body is held in Worker memory.
+  const reader = request.body?.getReader();
+  const chunks = [];
+  let size = 0;
+  while (reader) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > limit) {
+      await reader.cancel();
+      throw requestError('请求内容过大。', 413);
+    }
+    chunks.push(value);
+  }
+
+  const body = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    body.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  const text = decoder.decode(body);
   try {
     return JSON.parse(text || '{}');
   } catch {
-    throw new Error('请求不是有效的 JSON。');
+    throw requestError('请求不是有效的 JSON。');
   }
 }
 
@@ -357,7 +385,7 @@ async function handleApi(request, env) {
   return json({ error: '不支持这个请求方法。' }, 405);
 }
 
-export default {
+const worker = {
   async fetch(request, env) {
     try {
       if (new URL(request.url).pathname.startsWith('/api/admin/'))
@@ -374,3 +402,5 @@ export default {
     }
   },
 };
+
+export default worker;
