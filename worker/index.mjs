@@ -36,7 +36,7 @@ function json(payload, status = 200, headers = {}) {
 
 function parseCookies(header = '') {
   return Object.fromEntries(
-    header
+    String(header || '')
       .split(';')
       .map((item) => item.trim())
       .filter(Boolean)

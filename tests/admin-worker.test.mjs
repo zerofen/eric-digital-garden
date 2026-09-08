@@ -89,6 +89,22 @@ test('登录接口签发 HttpOnly 会话且不会返回密码', async () => {
   assert.doesNotMatch(body, /test-password/);
 });
 
+test('未登录访问管理接口返回 401', async () => {
+  const response = await worker.fetch(
+    new Request('https://eric.sryze.cc/api/admin/collections'),
+    {
+      ADMIN_PASSWORD: 'test-password',
+      SESSION_SECRET: 'a-long-test-session-secret',
+      GITHUB_TOKEN: 'unused-in-auth-test',
+      GITHUB_OWNER: 'test-owner',
+      GITHUB_REPO: 'test-repository',
+    },
+  );
+
+  assert.equal(response.status, 401);
+  assert.deepEqual(await response.json(), { error: '请先登录。' });
+});
+
 test('管理接口拒绝超限请求体并返回 413', async () => {
   const response = await worker.fetch(
     new Request('https://eric.sryze.cc/api/admin/login', {
