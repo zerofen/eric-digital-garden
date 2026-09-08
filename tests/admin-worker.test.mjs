@@ -163,13 +163,31 @@ test('四种栏目使用各自的数据结构并清理空白可选字段', () =>
   );
 });
 
+test('项目链接支持 HTTP 服务和站内路径', () => {
+  const [httpProject, localProject] = validateCollectionItems('projects', [
+    {
+      title: 'HTTP 服务',
+      description: '带端口的项目地址',
+      url: 'http://47.94.9.61:8317',
+    },
+    {
+      title: '站内项目',
+      description: '站内项目页面',
+      url: '/projects/demo',
+    },
+  ]);
+
+  assert.equal(httpProject.url, 'http://47.94.9.61:8317');
+  assert.equal(localProject.url, '/projects/demo');
+});
+
 test('栏目接口拒绝危险链接、无效日期和未知栏目', () => {
   assert.throws(
     () =>
       validateCollectionItems('projects', [
         { title: '项目', description: '介绍', url: 'javascript:alert(1)' },
       ]),
-    /HTTPS/,
+    /HTTP\(S\)/,
   );
   assert.throws(
     () =>

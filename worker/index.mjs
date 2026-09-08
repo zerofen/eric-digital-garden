@@ -187,8 +187,8 @@ function collectionText(item, field, label, maxLength, required = false) {
 function collectionUrl(item, field, label) {
   const value = collectionText(item, field, label, 2048);
   if (!value) return '';
-  if (!value.startsWith('https://') && !/^\/(?!\/)/.test(value))
-    throw requestError(`${label}请使用 HTTPS 链接或 / 开头的站内路径。`);
+  if (!/^https?:\/\//.test(value) && !/^\/(?!\/)/.test(value))
+    throw requestError(`${label}请使用 HTTP(S) 链接或 / 开头的站内路径。`);
   return value;
 }
 

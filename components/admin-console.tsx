@@ -846,7 +846,7 @@ export function AdminConsole({
                                 label="项目链接"
                                 value={collectionDraft.url}
                                 onChange={(value) => updateDraft('url', value)}
-                                placeholder="https://... 或 /projects/..."
+                                placeholder="http(s)://... 或 /projects/..."
                               />
                             </>
                           ) : null}
@@ -881,7 +881,7 @@ export function AdminConsole({
                                 label="书籍链接"
                                 value={collectionDraft.url}
                                 onChange={(value) => updateDraft('url', value)}
-                                placeholder="https://... 或 /books/..."
+                                placeholder="http(s)://... 或 /books/..."
                               />
                               <TextAreaField
                                 label="读书笔记"
@@ -914,7 +914,7 @@ export function AdminConsole({
                                 label="收听链接"
                                 value={collectionDraft.url}
                                 onChange={(value) => updateDraft('url', value)}
-                                placeholder="https://... 或 /music/..."
+                                placeholder="http(s)://... 或 /music/..."
                               />
                               <TextField
                                 label="音频地址"
@@ -922,7 +922,7 @@ export function AdminConsole({
                                 onChange={(value) =>
                                   updateDraft('audio', value)
                                 }
-                                placeholder="/audio/song.mp3 或 https://..."
+                                placeholder="/audio/song.mp3 或 http(s)://..."
                               />
                               <TextAreaField
                                 label="歌曲备注"

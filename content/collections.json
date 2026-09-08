@@ -4,10 +4,8 @@
       "title": "11",
       "description": "555",
       "status": "已完成",
-      "url": "/47.94.9.61:8317",
-      "tags": [
-        "QAW"
-      ]
+      "url": "http://47.94.9.61:8317",
+      "tags": ["QAW"]
     }
   ],
   "books": [],
