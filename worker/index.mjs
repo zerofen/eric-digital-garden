@@ -1,7 +1,15 @@
 const SESSION_COOKIE = 'eric_admin_session';
 const SESSION_TTL_MS = 4 * 60 * 60 * 1000;
 const MAX_SOURCE_BYTES = 1024 * 1024;
+const MAX_COLLECTION_ITEMS = 250;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const COLLECTION_KEYS = ['projects', 'books', 'music', 'moments'];
+const COLLECTION_LABELS = {
+  projects: '项目',
+  books: '书架',
+  music: '音乐',
+  moments: '此刻',
+};
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
@@ -162,6 +170,134 @@ export function parsePostSummary(slug, source, sha) {
   };
 }
 
+function collectionText(item, field, label, maxLength, required = false) {
+  const value = item?.[field];
+  if (value === undefined || value === null || value === '') {
+    if (required) throw requestError(`${label}不能为空。`);
+    return '';
+  }
+  if (typeof value !== 'string') throw requestError(`${label}必须是文字。`);
+  const trimmed = value.trim();
+  if (required && !trimmed) throw requestError(`${label}不能为空。`);
+  if (trimmed.length > maxLength)
+    throw requestError(`${label}不能超过 ${maxLength} 个字符。`);
+  return trimmed;
+}
+
+function collectionUrl(item, field, label) {
+  const value = collectionText(item, field, label, 2048);
+  if (!value) return '';
+  if (!value.startsWith('https://') && !/^\/(?!\/)/.test(value))
+    throw requestError(`${label}请使用 HTTPS 链接或 / 开头的站内路径。`);
+  return value;
+}
+
+function optionalFields(entries) {
+  return Object.fromEntries(entries.filter(([, value]) => value !== ''));
+}
+
+export function validateCollectionItems(collection, items) {
+  if (!COLLECTION_KEYS.includes(collection))
+    throw requestError('找不到这个内容栏目。', 404);
+  if (!Array.isArray(items)) throw requestError('栏目内容必须是数组。');
+  if (items.length > MAX_COLLECTION_ITEMS)
+    throw requestError(`每个栏目最多保存 ${MAX_COLLECTION_ITEMS} 条内容。`);
+
+  return items.map((item, index) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item))
+      throw requestError(`第 ${index + 1} 条内容格式不正确。`);
+
+    if (collection === 'projects') {
+      const tags = item.tags ?? [];
+      if (
+        !Array.isArray(tags) ||
+        tags.length > 12 ||
+        tags.some(
+          (tag) =>
+            typeof tag !== 'string' || !tag.trim() || tag.trim().length > 40,
+        )
+      )
+        throw requestError('项目标签必须是最多 12 个非空文字标签。');
+      return {
+        title: collectionText(item, 'title', '项目名称', 120, true),
+        description: collectionText(
+          item,
+          'description',
+          '项目介绍',
+          1200,
+          true,
+        ),
+        ...optionalFields([
+          ['status', collectionText(item, 'status', '项目状态', 80)],
+          ['url', collectionUrl(item, 'url', '项目链接')],
+        ]),
+        ...(tags.length ? { tags: tags.map((tag) => tag.trim()) } : {}),
+      };
+    }
+
+    if (collection === 'books') {
+      return {
+        title: collectionText(item, 'title', '书名', 160, true),
+        author: collectionText(item, 'author', '作者', 120, true),
+        ...optionalFields([
+          ['note', collectionText(item, 'note', '读书笔记', 1600)],
+          ['status', collectionText(item, 'status', '阅读状态', 80)],
+          ['url', collectionUrl(item, 'url', '书籍链接')],
+        ]),
+      };
+    }
+
+    if (collection === 'music') {
+      return {
+        title: collectionText(item, 'title', '歌曲名', 160, true),
+        artist: collectionText(item, 'artist', '歌手', 120, true),
+        ...optionalFields([
+          ['note', collectionText(item, 'note', '歌曲备注', 1600)],
+          ['url', collectionUrl(item, 'url', '收听链接')],
+          ['audio', collectionUrl(item, 'audio', '音频地址')],
+        ]),
+      };
+    }
+
+    const date = collectionText(item, 'date', '日期', 10, true);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      Number.isNaN(Date.parse(date)) ||
+      new Date(date).toISOString().slice(0, 10) !== date
+    )
+      throw requestError('此刻日期必须是有效的 YYYY-MM-DD。');
+    if (item.example !== undefined && typeof item.example !== 'boolean')
+      throw requestError('示例标记必须是 true 或 false。');
+    return {
+      date,
+      text: collectionText(item, 'text', '此刻内容', 3000, true),
+      ...(item.example ? { example: true } : {}),
+    };
+  });
+}
+
+export function parseCollectionsSource(source) {
+  if (
+    typeof source !== 'string' ||
+    encoder.encode(source).length > MAX_SOURCE_BYTES
+  )
+    throw requestError('栏目数据文件过大。', 413);
+  let document;
+  try {
+    document = JSON.parse(source);
+  } catch {
+    throw requestError('栏目数据不是有效的 JSON。');
+  }
+  if (!document || typeof document !== 'object' || Array.isArray(document))
+    throw requestError('栏目数据格式不正确。');
+  return Object.fromEntries(
+    COLLECTION_KEYS.map((key) => [
+      key,
+      validateCollectionItems(key, document[key]),
+    ]),
+  );
+}
+
 function githubPath(env, path) {
   const owner = encodeURIComponent(env.GITHUB_OWNER || '');
   const repository = encodeURIComponent(env.GITHUB_REPO || '');
@@ -230,6 +366,37 @@ async function listPosts(env) {
       right.date.localeCompare(left.date) ||
       left.slug.localeCompare(right.slug),
   );
+}
+
+async function getCollectionsFile(env) {
+  const branch = encodeURIComponent(repositoryBranch(env));
+  const file = await githubRequest(
+    env,
+    `/contents/content/collections.json?ref=${branch}`,
+  );
+  return {
+    collections: parseCollectionsSource(decodeGithubContent(file.content)),
+    sha: file.sha,
+  };
+}
+
+async function saveCollection(env, collection, items, suppliedSha) {
+  const current = await getCollectionsFile(env);
+  if (!suppliedSha || suppliedSha !== current.sha)
+    throw requestError('栏目内容已经更新，请刷新后台后再保存。', 409);
+  const next = {
+    ...current.collections,
+    [collection]: validateCollectionItems(collection, items),
+  };
+  await githubRequest(env, '/contents/content/collections.json', {
+    method: 'PUT',
+    body: JSON.stringify({
+      message: `更新${COLLECTION_LABELS[collection]}`,
+      content: encodeGithubContent(`${JSON.stringify(next, null, 2)}\n`),
+      branch: repositoryBranch(env),
+      sha: current.sha,
+    }),
+  });
 }
 
 async function readJson(request) {
@@ -331,6 +498,24 @@ async function handleApi(request, env) {
 
   if (path === '/api/admin/posts' && request.method === 'GET') {
     return json({ posts: await listPosts(env) });
+  }
+
+  if (path === '/api/admin/collections' && request.method === 'GET') {
+    return json(await getCollectionsFile(env));
+  }
+
+  const collectionMatch = path.match(
+    /^\/api\/admin\/collections\/(projects|books|music|moments)$/,
+  );
+  if (collectionMatch && request.method === 'PUT') {
+    const body = await readJson(request);
+    await saveCollection(
+      env,
+      collectionMatch[1],
+      body.items,
+      String(body.sha || ''),
+    );
+    return json({ saved: true });
   }
 
   if (path === '/api/admin/posts' && request.method === 'POST') {

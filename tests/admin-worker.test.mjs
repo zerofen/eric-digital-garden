@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   createSessionToken,
+  parseCollectionsSource,
   parsePostSummary,
+  validateCollectionItems,
   validatePostInput,
   verifySessionToken,
 } from '../worker/index.mjs';
@@ -109,4 +111,60 @@ test('管理接口拒绝超限请求体并返回 413', async () => {
 
   assert.equal(response.status, 413);
   assert.deepEqual(await response.json(), { error: '请求内容过大。' });
+});
+
+test('四种栏目使用各自的数据结构并清理空白可选字段', () => {
+  assert.deepEqual(
+    validateCollectionItems('projects', [
+      {
+        title: '  DriveMind  ',
+        description: '驾驶员监测系统',
+        status: '',
+        tags: [' AI ', '安全'],
+      },
+    ]),
+    [
+      {
+        title: 'DriveMind',
+        description: '驾驶员监测系统',
+        tags: ['AI', '安全'],
+      },
+    ],
+  );
+  assert.deepEqual(
+    validateCollectionItems('books', [{ title: '书', author: '作者' }]),
+    [{ title: '书', author: '作者' }],
+  );
+  assert.deepEqual(
+    validateCollectionItems('music', [{ title: '歌', artist: '歌手' }]),
+    [{ title: '歌', artist: '歌手' }],
+  );
+  assert.deepEqual(
+    validateCollectionItems('moments', [
+      { date: '2026-09-08', text: '今天的片段', example: false },
+    ]),
+    [{ date: '2026-09-08', text: '今天的片段' }],
+  );
+});
+
+test('栏目接口拒绝危险链接、无效日期和未知栏目', () => {
+  assert.throws(
+    () =>
+      validateCollectionItems('projects', [
+        { title: '项目', description: '介绍', url: 'javascript:alert(1)' },
+      ]),
+    /HTTPS/,
+  );
+  assert.throws(
+    () =>
+      validateCollectionItems('moments', [
+        { date: '2026-02-30', text: '日期' },
+      ]),
+    /日期/,
+  );
+  assert.throws(() => validateCollectionItems('unknown', []), /栏目/);
+  assert.throws(
+    () => parseCollectionsSource('{"projects":[]}'),
+    /栏目内容必须是数组/,
+  );
 });
