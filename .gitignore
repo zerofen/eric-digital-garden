@@ -40,3 +40,4 @@ next-env.d.ts
 /work/
 *.tsbuildinfo
 /eric-garden-static.zip
+/.music-source/
