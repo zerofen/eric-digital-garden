@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import '@fontsource/dm-serif-display/latin-400.css';
 import '@fontsource-variable/dm-sans';
 import './globals.css';
@@ -7,6 +6,7 @@ import { site } from '@/lib/site';
 import { getCollections } from '@/lib/content.mjs';
 import { SiteHeader } from '@/components/site-header';
 import { MusicProvider } from '@/components/music-provider';
+import { SiteLink as Link } from '@/components/site-link';
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

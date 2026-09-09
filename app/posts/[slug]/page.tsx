@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { getPosts, getPost } from '@/lib/content.mjs';
 import { formatDate, site } from '@/lib/site';
+import { SiteLink as Link } from '@/components/site-link';
 
 export const dynamicParams = false;
 export function generateStaticParams() {

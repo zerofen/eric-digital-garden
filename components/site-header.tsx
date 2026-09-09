@@ -1,8 +1,8 @@
 'use client';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { navigation, site } from '@/lib/site';
 import { AdminConsole } from '@/components/admin-console';
+import { SiteLink as Link } from '@/components/site-link';
 
 export function SiteHeader() {
   const pathname = usePathname();

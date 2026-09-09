@@ -1,5 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
-import Link from 'next/link';
+import { SiteLink as Link } from '@/components/site-link';
 import { formatDate } from '@/lib/site';
 import type { Post } from '@/lib/content.mjs';
 

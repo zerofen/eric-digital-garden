@@ -1,7 +1,6 @@
 'use client';
 
 /* oxlint-disable jsx-a11y/media-has-caption */
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Pause, Play } from 'lucide-react';
 import {
@@ -14,6 +13,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from 'react';
+import { SiteLink as Link } from '@/components/site-link';
 
 export type MusicTrack = {
   title: string;

@@ -4,7 +4,7 @@ import { getPosts, getCollections } from '@/lib/content.mjs';
 import { PostList } from '@/components/post-list';
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { SiteLink as Link } from '@/components/site-link';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+import { SiteLink as Link } from '@/components/site-link';
 export function CollectionPage({
   eyebrow,
   title,
