@@ -31,10 +31,67 @@ export function resolveAssetRequest(request) {
   return new Request(url, request);
 }
 
+function parseByteRange(range, size) {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(range || '');
+  if (!match || (!match[1] && !match[2]) || size < 1) return null;
+
+  let start = 0;
+  let end = size - 1;
+  if (!match[1]) {
+    const suffixLength = Math.min(Number(match[2]), size);
+    start = size - suffixLength;
+  } else {
+    start = Number(match[1]);
+    if (match[2]) end = Math.min(Number(match[2]), size - 1);
+  }
+  if (
+    !Number.isSafeInteger(start) ||
+    !Number.isSafeInteger(end) ||
+    start < 0 ||
+    start >= size ||
+    end < start
+  )
+    return null;
+  return { start, end };
+}
+
+async function serveAudioRange(request, response) {
+  const rangeHeader = request.headers.get('Range');
+  if (
+    request.method !== 'GET' ||
+    !rangeHeader ||
+    !response.ok ||
+    response.status !== 200 ||
+    !response.headers.get('Content-Type')?.startsWith('audio/')
+  )
+    return response;
+
+  // Static Assets 当前会把音频区间请求返回为完整文件；Worker 在边缘把它
+  // 切成标准 206 响应，浏览器才能在未完整下载时立即跳转播放位置。
+  const source = await response.arrayBuffer();
+  const selected = parseByteRange(rangeHeader, source.byteLength);
+  const headers = new Headers(response.headers);
+  headers.set('Accept-Ranges', 'bytes');
+  if (!selected) {
+    headers.set('Content-Range', `bytes */${source.byteLength}`);
+    headers.delete('Content-Length');
+    return new Response(null, { status: 416, headers });
+  }
+
+  const body = source.slice(selected.start, selected.end + 1);
+  headers.set(
+    'Content-Range',
+    `bytes ${selected.start}-${selected.end}/${source.byteLength}`,
+  );
+  headers.set('Content-Length', String(body.byteLength));
+  return new Response(body, { status: 206, headers });
+}
+
 async function serveAsset(request, env) {
   const assetRequest = resolveAssetRequest(request);
   const response = await env.ASSETS.fetch(assetRequest);
-  if (assetRequest === request || !response.ok) return response;
+  if (assetRequest === request || !response.ok)
+    return serveAudioRange(request, response);
 
   // Vinext 通过 Content-Type 判断能否在当前文档内完成路由切换。
   const headers = new Headers(response.headers);

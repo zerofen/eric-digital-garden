@@ -142,6 +142,29 @@ test('站内导航的 RSC 请求读取对应静态资源', async () => {
   );
 });
 
+test('音频资源支持拖动播放所需的字节区间响应', async () => {
+  const response = await worker.fetch(
+    new Request('https://eric.sryze.cc/music/song.mp3', {
+      headers: { Range: 'bytes=2-4' },
+    }),
+    {
+      ASSETS: {
+        fetch() {
+          return new Response('abcdef', {
+            headers: { 'Content-Type': 'audio/mpeg' },
+          });
+        },
+      },
+    },
+  );
+
+  assert.equal(response.status, 206);
+  assert.equal(response.headers.get('Accept-Ranges'), 'bytes');
+  assert.equal(response.headers.get('Content-Range'), 'bytes 2-4/6');
+  assert.equal(response.headers.get('Content-Length'), '3');
+  assert.equal(await response.text(), 'cde');
+});
+
 test('管理接口拒绝超限请求体并返回 413', async () => {
   const response = await worker.fetch(
     new Request('https://eric.sryze.cc/api/admin/login', {
