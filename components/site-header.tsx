@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { navigation, site } from '@/lib/site';
 import { AdminConsole } from '@/components/admin-console';
@@ -10,14 +11,14 @@ export function SiteHeader() {
       <div className="header-inner">
         <div className="brand">
           <AdminConsole avatar={site.avatar} name={site.name} />
-          <a href="/" aria-label={`${site.name}，返回首页`}>
+          <Link href="/" aria-label={`${site.name}，返回首页`}>
             {site.name}
             <span className="brand-dot">.</span>
-          </a>
+          </Link>
         </div>
         <nav aria-label="主导航">
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               aria-current={
@@ -31,7 +32,7 @@ export function SiteHeader() {
               }
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
       </div>

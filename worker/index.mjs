@@ -10,8 +10,42 @@ const COLLECTION_LABELS = {
   music: '音乐',
   moments: '此刻',
 };
+const RSC_COMPATIBILITY_ID = 'eric-garden-static-v1';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
+
+function isRscRequest(request) {
+  return (
+    ['GET', 'HEAD'].includes(request.method) &&
+    (request.headers.get('RSC') === '1' ||
+      request.headers.get('Accept')?.includes('text/x-component'))
+  );
+}
+
+export function resolveAssetRequest(request) {
+  if (!isRscRequest(request)) return request;
+  const url = new URL(request.url);
+  const pathname = url.pathname.replace(/\/$/, '');
+  url.pathname = pathname ? `${pathname}.rsc` : '/index.rsc';
+  url.search = '';
+  return new Request(url, request);
+}
+
+async function serveAsset(request, env) {
+  const assetRequest = resolveAssetRequest(request);
+  const response = await env.ASSETS.fetch(assetRequest);
+  if (assetRequest === request || !response.ok) return response;
+
+  // Vinext 通过 Content-Type 判断能否在当前文档内完成路由切换。
+  const headers = new Headers(response.headers);
+  headers.set('Content-Type', 'text/x-component; charset=utf-8');
+  headers.set('X-Vinext-RSC-Compatibility-Id', RSC_COMPATIBILITY_ID);
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
 
 function requestError(message, status = 400) {
   const error = new Error(message);
@@ -575,7 +609,7 @@ const worker = {
     try {
       if (new URL(request.url).pathname.startsWith('/api/admin/'))
         return await handleApi(request, env);
-      return env.ASSETS.fetch(request);
+      return serveAsset(request, env);
     } catch (error) {
       const status = Number.isInteger(error?.status) ? error.status : 500;
       const publicMessage =

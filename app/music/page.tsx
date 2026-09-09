@@ -17,7 +17,7 @@ export default function Music() {
       description="按下播放，让周兴哲的旋律陪你走一程。"
     >
       {music.length ? (
-        <MusicPlayer tracks={music} />
+        <MusicPlayer />
       ) : (
         <EmptyCollection
           symbol={<Music2 size={42} strokeWidth={1} />}

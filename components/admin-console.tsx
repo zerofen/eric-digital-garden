@@ -922,7 +922,7 @@ export function AdminConsole({
                                 onChange={(value) =>
                                   updateDraft('audio', value)
                                 }
-                                placeholder="/audio/song.mp3 或 http(s)://..."
+                                placeholder="/music/song.mp3 或 http(s)://..."
                               />
                               <TextAreaField
                                 label="歌曲备注"

@@ -1,16 +1,12 @@
 'use client';
 
-/* oxlint-disable jsx-a11y/media-has-caption */
 import { ArrowUpRight, Pause, Play, Radio } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-
-export type MusicTrack = {
-  title: string;
-  artist: string;
-  note?: string;
-  url?: string;
-  audio?: string;
-};
+import {
+  formatMusicTime,
+  musicProgressStyle,
+  useMusic,
+  useNativeMusicSeek,
+} from '@/components/music-provider';
 
 const dialLabels = [
   '88',
@@ -26,81 +22,22 @@ const dialLabels = [
 const dialTicks = Array.from({ length: 33 }, (_, index) => index);
 const equalizerBars = Array.from({ length: 8 }, (_, index) => index);
 
-function formatTime(value: number) {
-  if (!Number.isFinite(value) || value < 0) return '0:00';
-  const minutes = Math.floor(value / 60);
-  const seconds = Math.floor(value % 60)
-    .toString()
-    .padStart(2, '0');
-  return `${minutes}:${seconds}`;
-}
+export function MusicPlayer() {
+  const {
+    tracks,
+    currentIndex,
+    currentTrack,
+    currentTime,
+    duration,
+    isPlaying,
+    playerMessage,
+    selectTrack,
+    seekTo,
+    togglePlayback,
+  } = useMusic();
+  const progressRef = useNativeMusicSeek(seekTo);
 
-export function MusicPlayer({ tracks }: { tracks: MusicTrack[] }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const playAfterTrackChange = useRef(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [playerMessage, setPlayerMessage] = useState('准备播放');
-  const currentTrack = tracks[currentIndex];
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    setCurrentTime(0);
-    setDuration(0);
-    setPlayerMessage('正在读取音频');
-    audio.load();
-
-    // 切歌由用户点击触发，因此浏览器允许在新音源载入后继续播放。
-    if (playAfterTrackChange.current) {
-      playAfterTrackChange.current = false;
-      void audio.play().catch(() => setPlayerMessage('点击播放继续收听'));
-    }
-  }, [currentIndex]);
-
-  async function togglePlayback() {
-    const audio = audioRef.current;
-    if (!audio || !currentTrack.audio) return;
-    if (audio.paused) {
-      try {
-        await audio.play();
-      } catch {
-        setPlayerMessage('浏览器暂时无法播放这首歌');
-      }
-    } else {
-      audio.pause();
-    }
-  }
-
-  function selectTrack(index: number) {
-    if (!tracks[index]?.audio) return;
-    if (index === currentIndex) {
-      void togglePlayback();
-      return;
-    }
-    playAfterTrackChange.current = true;
-    setCurrentIndex(index);
-  }
-
-  function playNextTrack() {
-    const nextIndex = tracks.findIndex(
-      (track, index) => index > currentIndex && track.audio,
-    );
-    const fallbackIndex = tracks.findIndex((track) => track.audio);
-    const targetIndex = nextIndex >= 0 ? nextIndex : fallbackIndex;
-    if (targetIndex < 0) return;
-    playAfterTrackChange.current = true;
-    setCurrentIndex(targetIndex);
-  }
-
-  function seekTo(value: number) {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.currentTime = value;
-    setCurrentTime(value);
-  }
+  if (!currentTrack) return null;
 
   return (
     <section className="music-station" aria-label="Eric 的音乐电台">
@@ -170,51 +107,24 @@ export function MusicPlayer({ tracks }: { tracks: MusicTrack[] }) {
               <blockquote>「{currentTrack.note}」</blockquote>
             )}
             <div className="station-progress">
-              <time>{formatTime(currentTime)}</time>
+              <time>{formatMusicTime(currentTime)}</time>
               <input
+                ref={progressRef}
                 type="range"
                 min="0"
                 max={duration || 0}
                 step="0.1"
                 value={Math.min(currentTime, duration || 0)}
-                onChange={(event) => seekTo(Number(event.target.value))}
+                onChange={(event) => seekTo(Number(event.currentTarget.value))}
                 aria-label={`${currentTrack.title} 播放进度`}
-                style={
-                  {
-                    '--music-progress': `${duration ? (currentTime / duration) * 100 : 0}%`,
-                  } as React.CSSProperties
-                }
+                aria-valuetext={`${formatMusicTime(currentTime)} / ${formatMusicTime(duration)}`}
+                title="拖动滑块调整播放位置"
+                style={musicProgressStyle(currentTime, duration)}
               />
-              <time>{formatTime(duration)}</time>
+              <time>{formatMusicTime(duration)}</time>
             </div>
           </div>
         </div>
-
-        <audio
-          className="music-audio-engine"
-          ref={audioRef}
-          src={currentTrack.audio}
-          preload="metadata"
-          onLoadedMetadata={(event) => {
-            setDuration(event.currentTarget.duration);
-            setPlayerMessage(
-              event.currentTarget.paused ? '准备播放' : '正在播放',
-            );
-          }}
-          onTimeUpdate={(event) =>
-            setCurrentTime(event.currentTarget.currentTime)
-          }
-          onPlay={() => {
-            setIsPlaying(true);
-            setPlayerMessage('正在播放');
-          }}
-          onPause={() => {
-            setIsPlaying(false);
-            setPlayerMessage('已暂停');
-          }}
-          onEnded={playNextTrack}
-          onError={() => setPlayerMessage('音频加载失败')}
-        />
       </div>
 
       <div className="station-program-header">

@@ -1,4 +1,5 @@
 import { ArrowUpRight } from 'lucide-react';
+import Link from 'next/link';
 import { formatDate } from '@/lib/site';
 import type { Post } from '@/lib/content.mjs';
 
@@ -14,7 +15,11 @@ export function PostList({ posts }: { posts: Post[] }) {
   return (
     <div className="post-list">
       {posts.map((post, index) => (
-        <a className="post-row" key={post.slug} href={`/posts/${post.slug}/`}>
+        <Link
+          className="post-row"
+          key={post.slug}
+          href={`/posts/${post.slug}/`}
+        >
           <span className="post-number">
             {String(index + 1).padStart(2, '0')}
           </span>
@@ -32,7 +37,7 @@ export function PostList({ posts }: { posts: Post[] }) {
             <span>{post.readingMinutes} 分钟阅读</span>
             <ArrowUpRight size={22} strokeWidth={1.4} />
           </div>
-        </a>
+        </Link>
       ))}
     </div>
   );

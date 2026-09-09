@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { getPosts, getPost } from '@/lib/content.mjs';
@@ -41,10 +42,10 @@ export default async function Article({
   const next = posts[posts.findIndex((item) => item.slug === post.slug) + 1];
   return (
     <main id="main" className="article-page">
-      <a className="back-link" href="/posts/">
+      <Link className="back-link" href="/posts/">
         <ArrowLeft size={16} />
         返回文章
-      </a>
+      </Link>
       <header className="article-header">
         <div className="post-meta">
           <time dateTime={post.date}>{formatDate(post.date)}</time>
@@ -94,13 +95,13 @@ export default async function Article({
         <p>感谢阅读，愿你也有所生长。</p>
       </div>
       {next && (
-        <a className="next-post" href={`/posts/${next.slug}/`}>
+        <Link className="next-post" href={`/posts/${next.slug}/`}>
           <div>
             <span>再读一篇</span>
             <h2>{next.title}</h2>
           </div>
           <ArrowUpRight size={24} />
-        </a>
+        </Link>
       )}
     </main>
   );

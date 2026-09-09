@@ -4,6 +4,7 @@ import {
   createSessionToken,
   parseCollectionsSource,
   parsePostSummary,
+  resolveAssetRequest,
   validateCollectionItems,
   validatePostInput,
   verifySessionToken,
@@ -103,6 +104,42 @@ test('未登录访问管理接口返回 401', async () => {
 
   assert.equal(response.status, 401);
   assert.deepEqual(await response.json(), { error: '请先登录。' });
+});
+
+test('站内导航的 RSC 请求读取对应静态资源', async () => {
+  const seen = [];
+  const response = await worker.fetch(
+    new Request('https://eric.sryze.cc/posts?_rsc=cache-key', {
+      headers: { Accept: 'text/x-component', RSC: '1' },
+    }),
+    {
+      ASSETS: {
+        fetch(request) {
+          seen.push(request.url);
+          return new Response('rsc payload');
+        },
+      },
+    },
+  );
+
+  assert.deepEqual(seen, ['https://eric.sryze.cc/posts.rsc']);
+  assert.equal(
+    response.headers.get('Content-Type'),
+    'text/x-component; charset=utf-8',
+  );
+  assert.equal(
+    response.headers.get('X-Vinext-RSC-Compatibility-Id'),
+    'eric-garden-static-v1',
+  );
+  assert.equal(await response.text(), 'rsc payload');
+  assert.equal(
+    resolveAssetRequest(
+      new Request('https://eric.sryze.cc/?_rsc=root', {
+        headers: { RSC: '1' },
+      }),
+    ).url,
+    'https://eric.sryze.cc/index.rsc',
+  );
 });
 
 test('管理接口拒绝超限请求体并返回 413', async () => {

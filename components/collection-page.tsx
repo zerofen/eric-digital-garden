@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 export function CollectionPage({
   eyebrow,
   title,
@@ -38,9 +39,9 @@ export function EmptyCollection({
       <span className="empty-symbol">{symbol}</span>
       <h2>{title}</h2>
       <p>{description}</p>
-      <a className="text-link" href="/posts/">
+      <Link className="text-link" href="/posts/">
         先去文字里逛逛 ↗
-      </a>
+      </Link>
     </div>
   );
 }

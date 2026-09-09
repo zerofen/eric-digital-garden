@@ -4,6 +4,7 @@ import { getPosts, getCollections } from '@/lib/content.mjs';
 import { PostList } from '@/components/post-list';
 import { Fragment } from 'react';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 
@@ -67,23 +68,23 @@ export default function Home() {
             <span>{site.intro}</span>
           </div>
           <div className="hero-actions">
-            <a className="button button-primary" href="/posts/">
+            <Link className="button button-primary" href="/posts/">
               去读文章
               <ArrowUpRight size={17} />
-            </a>
-            <a className="button button-secondary" href="/now/">
+            </Link>
+            <Link className="button button-secondary" href="/now/">
               看看此刻
               <span className="status-dot" />
-            </a>
+            </Link>
           </div>
           <div className="hero-stats">
             {stats.map((item, index) => (
               <Fragment key={item.href}>
                 {index > 0 && <Asterisk size={12} />}
-                <a href={item.href}>
+                <Link href={item.href}>
                   <b>{String(item.count).padStart(2, '0')}</b>
                   {item.label}
-                </a>
+                </Link>
               </Fragment>
             ))}
           </div>
@@ -104,9 +105,9 @@ export default function Home() {
               最近，写了这些<span>。</span>
             </h2>
           </div>
-          <a className="text-link" href="/posts/">
+          <Link className="text-link" href="/posts/">
             所有文章 <ArrowUpRight size={17} />
-          </a>
+          </Link>
         </div>
         <PostList posts={posts.slice(0, 3)} />
         <div className="garden-footnote">
