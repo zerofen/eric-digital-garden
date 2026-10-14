@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="630" viewBox="0 0 1300 630" role="img" aria-labelledby="title desc">
+<title id="title">RoboRefIt 逐步消融的 IoU 变化</title><desc id="desc">TestA 的四组 IoU 为85.46、86.83、89.14、90.03；TestB 为61.49、65.55、67.05、68.84。柱状图使用从0到100的完整百分比轴。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+<style>text{font-family:Inter,Arial,"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172b42}.muted{fill:#596b80}.mono{font-family:"Cascadia Code",Consolas,monospace}</style>
+<rect width="1300" height="630" fill="white"/>
+<text x="40" y="49" font-size="29" font-weight="700" text-anchor="start">RoboRefIt: Component-wise Ablation</text>
+<text x="40" y="84" font-size="21" font-weight="400" text-anchor="start" style="fill:#596b80">同一顺序添加 CLIP 文本、视觉适配器、双向编码器；数据来自论文表 4。</text>
+<polyline points="100,485.0 1250,485.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="492.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">0</text>
+<polyline points="100,415.0 1250,415.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="422.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">20</text>
+<polyline points="100,345.0 1250,345.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="352.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">40</text>
+<polyline points="100,275.0 1250,275.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="282.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">60</text>
+<polyline points="100,205.0 1250,205.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="212.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">80</text>
+<polyline points="100,135.0 1250,135.0" fill="none" stroke="#e4eaf0" stroke-width="2.4" stroke-linejoin="round"/>
+<text x="82" y="142.0" font-size="19" font-weight="400" text-anchor="end" style="fill:#596b80">100</text>
+<text x="40" y="117" font-size="19" font-weight="400" text-anchor="start" style="fill:#596b80">IoU (%)</text>
+<rect x="174" y="185.89000000000004" width="66" height="299.10999999999996" rx="3" fill="#4c78b9" stroke="#4c78b9" stroke-width="1.6"/>
+<text x="207" y="172.89000000000004" font-size="22" font-weight="650" text-anchor="middle">85.46</text>
+<rect x="250" y="269.78499999999997" width="66" height="215.215" rx="3" fill="#339a83" stroke="#339a83" stroke-width="1.6"/>
+<text x="283" y="256.78499999999997" font-size="22" font-weight="650" text-anchor="middle">61.49</text>
+<text x="245" y="526" font-size="22" font-weight="600" text-anchor="middle">VL-Grasp 基准</text>
+<rect x="454" y="181.09500000000003" width="66" height="303.905" rx="3" fill="#4c78b9" stroke="#4c78b9" stroke-width="1.6"/>
+<text x="487" y="168.09500000000003" font-size="22" font-weight="650" text-anchor="middle">86.83</text>
+<rect x="530" y="255.57500000000002" width="66" height="229.42499999999998" rx="3" fill="#339a83" stroke="#339a83" stroke-width="1.6"/>
+<text x="563" y="242.57500000000002" font-size="22" font-weight="650" text-anchor="middle">65.55</text>
+<text x="525" y="526" font-size="22" font-weight="600" text-anchor="middle">+ CLIP 文本</text>
+<rect x="734" y="173.01" width="66" height="311.99" rx="3" fill="#4c78b9" stroke="#4c78b9" stroke-width="1.6"/>
+<text x="767" y="160.01" font-size="22" font-weight="650" text-anchor="middle">89.14</text>
+<rect x="810" y="250.32500000000002" width="66" height="234.67499999999998" rx="3" fill="#339a83" stroke="#339a83" stroke-width="1.6"/>
+<text x="843" y="237.32500000000002" font-size="22" font-weight="650" text-anchor="middle">67.05</text>
+<text x="805" y="526" font-size="22" font-weight="600" text-anchor="middle">+ 视觉适配器</text>
+<rect x="1014" y="169.89499999999998" width="66" height="315.105" rx="3" fill="#4c78b9" stroke="#4c78b9" stroke-width="1.6"/>
+<text x="1047" y="156.89499999999998" font-size="22" font-weight="650" text-anchor="middle">90.03</text>
+<rect x="1090" y="244.06" width="66" height="240.94" rx="3" fill="#339a83" stroke="#339a83" stroke-width="1.6"/>
+<text x="1123" y="231.06" font-size="22" font-weight="650" text-anchor="middle">68.84</text>
+<text x="1085" y="526" font-size="22" font-weight="600" text-anchor="middle">+ 双向编码器</text>
+<rect x="410" y="573" width="20" height="20" rx="3" fill="#4c78b9" stroke="#4c78b9" stroke-width="1.6"/>
+<text x="442" y="590" font-size="21" font-weight="400" text-anchor="start">TestA · 已知类别</text>
+<rect x="729" y="573" width="20" height="20" rx="3" fill="#339a83" stroke="#339a83" stroke-width="1.6"/>
+<text x="761" y="590" font-size="21" font-weight="400" text-anchor="start">TestB · 未知类别</text>
+</svg>

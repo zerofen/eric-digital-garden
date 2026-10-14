@@ -1,0 +1,119 @@
+{
+  "source_pdf": "语义-几何协同引导的解耦式语言驱动六自由度抓取方法_李西兴.pdf",
+  "doi": "10.3778/j.issn.1002-8331.2601-0088",
+  "figures": [
+    {
+      "file": "robot-setup.webp",
+      "paper_figure": 5,
+      "pdf_page": 7,
+      "printed_page": 104,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        190,
+        138,
+        765,
+        360
+      ],
+      "width": 1149,
+      "height": 444
+    },
+    {
+      "file": "grounding-results.webp",
+      "paper_figure": 6,
+      "pdf_page": 8,
+      "printed_page": 105,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        151,
+        650,
+        812,
+        1074
+      ],
+      "width": 1321,
+      "height": 847
+    },
+    {
+      "file": "cluttered-grasps.webp",
+      "paper_figure": 8,
+      "pdf_page": 10,
+      "printed_page": 107,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        80,
+        135,
+        876,
+        411
+      ],
+      "width": 1591,
+      "height": 552
+    },
+    {
+      "file": "challenging-grasps.webp",
+      "paper_figure": 9,
+      "pdf_page": 10,
+      "printed_page": 107,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        80,
+        976,
+        877,
+        1271
+      ],
+      "width": 1593,
+      "height": 590
+    },
+    {
+      "file": "method-comparison.webp",
+      "paper_figure": 10,
+      "pdf_page": 11,
+      "printed_page": 108,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        95,
+        807,
+        868,
+        1271
+      ],
+      "width": 1545,
+      "height": 928
+    },
+    {
+      "file": "failure-cases.webp",
+      "paper_figure": 11,
+      "pdf_page": 12,
+      "printed_page": 109,
+      "reference_page_size": [
+        953,
+        1348
+      ],
+      "crop_bounds": [
+        502,
+        136,
+        876,
+        478
+      ],
+      "width": 748,
+      "height": 684
+    }
+  ],
+  "redrawn": [
+    "framework.svg",
+    "bidirectional-attention.svg",
+    "ablation-iou.svg"
+  ]
+}

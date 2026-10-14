@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1720" height="1070" viewBox="0 0 1720 1070" role="img" aria-labelledby="title desc">
+<title id="title">语义—几何协同引导的解耦式六自由度抓取框架</title><desc id="desc">上层为 CLIP 早期对齐与六层双向交互的视觉定位；像素掩码作为显式接口，与深度和相机内参构建局部点云，交由预训练 FGC-GraspNet 推理和筛选抓取。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/></marker></defs>
+<style>text{font-family:Inter,Arial,"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#172b42}.muted{fill:#596b80}.mono{font-family:"Cascadia Code",Consolas,monospace}</style>
+<rect width="1720" height="1070" fill="white"/>
+<text x="40" y="48" font-size="30" font-weight="700" text-anchor="start">Semantic–Geometric Decoupling for Language-Driven 6-DoF Grasping</text>
+<text x="40" y="83" font-size="22" font-weight="400" text-anchor="start" style="fill:#596b80">语言指代定位 → 像素级空间接口 → 局部几何抓取</text>
+<rect x="32" y="116" width="1656" height="514" rx="18" fill="#f5f8fd" stroke="#c8d9ed" stroke-width="1.6"/>
+<text x="56" y="158" font-size="24" font-weight="700" text-anchor="start" style="fill:#245cb0">A  跨模态视觉定位 / CROSS-MODAL VISUAL GROUNDING</text>
+<polyline points="266,286 302,286" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="447,332 447,377" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="592,450 620,450 620,292 648,292" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="266,509 302,509" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="592,547 620,547 620,470 648,470" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="938,383 970,383 970,365 1000,365" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1226,365 1243,365 1243,304 1260,304" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1243,365 1243,471 1260,471" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1444,304 1482,304" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1444,471 1482,471" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="447,577 447,604 1113,604 1113,455" fill="none" stroke="#a384bf" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="853" y="592" font-size="19" font-weight="400" text-anchor="middle" style="fill:#79559b">查询编码器 → 短语嵌入</text>
+<rect x="56" y="226" width="210" height="120" rx="12" fill="#fff" stroke="#b8c8da" stroke-width="1.6"/>
+<text x="161.0" y="260" font-size="22" font-weight="650" text-anchor="middle">RGB 图像 I</text>
+<text x="161.0" y="292" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">二维视觉输入</text>
+<text x="161.0" y="321" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">与深度图对齐</text>
+<rect x="56" y="452" width="210" height="120" rx="12" fill="#f5f0fa" stroke="#d2bfdf" stroke-width="1.6"/>
+<text x="161.0" y="486" font-size="22" font-weight="650" text-anchor="middle">英文指令 L</text>
+<text x="161.0" y="518" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">类别 · 属性</text>
+<text x="161.0" y="547" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">空间关系</text>
+<rect x="302" y="226" width="290" height="106" rx="12" fill="#eaf1fd" stroke="#aac2e8" stroke-width="1.6"/>
+<text x="447.0" y="260" font-size="22" font-weight="650" text-anchor="middle">ResNet-50</text>
+<text x="447.0" y="292" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">视觉主干 · 2048 维</text>
+<rect x="302" y="377" width="290" height="119" rx="12" fill="#eaf1fd" stroke="#aac2e8" stroke-width="1.6"/>
+<text x="447.0" y="411" font-size="22" font-weight="650" text-anchor="middle">CLIP 视觉适配器</text>
+<text x="447.0" y="443" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">卷积 + 组归一化：→ 768</text>
+<text x="447.0" y="472" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">8 头自注意力</text>
+<rect x="302" y="509" width="290" height="68" rx="12" fill="#f5f0fa" stroke="#d2bfdf" stroke-width="1.6"/>
+<text x="447.0" y="543" font-size="22" font-weight="650" text-anchor="middle">CLIP 文本编码器</text>
+<rect x="648" y="218" width="290" height="320" rx="12" fill="#fff" stroke="#aac2e8" stroke-width="1.6"/>
+<text x="793" y="252" font-size="23" font-weight="650" text-anchor="middle">双向编码器 × 6</text>
+<rect x="671" y="274" width="244" height="68" rx="12" fill="#eaf1fd" stroke="#aac2e8" stroke-width="1.6"/>
+<text x="793.0" y="308" font-size="22" font-weight="650" text-anchor="middle">视觉流 v</text>
+<polyline points="737,348 737,412" fill="none" stroke="#245cb0" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="850,412 850,348" fill="none" stroke="#79559b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="793" y="380" font-size="19" font-weight="600" text-anchor="middle">共享 S / Sᵀ</text>
+<rect x="671" y="418" width="244" height="68" rx="12" fill="#f5f0fa" stroke="#d2bfdf" stroke-width="1.6"/>
+<text x="793.0" y="452" font-size="22" font-weight="650" text-anchor="middle">语言流 l</text>
+<text x="793" y="519" font-size="17" font-weight="400" text-anchor="middle" style="fill:#596b80">独立 FFN · 残差 · 层归一化</text>
+<rect x="1000" y="283" width="226" height="172" rx="12" fill="#fff" stroke="#b8c8da" stroke-width="1.6"/>
+<text x="1113.0" y="317" font-size="21" font-weight="650" text-anchor="middle">拼接 + 解码器</text>
+<text x="1113.0" y="349" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">精炼的视觉 / 语言特征</text>
+<text x="1113.0" y="378" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">+ 查询短语嵌入</text>
+<text x="1113.0" y="407" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">共享多任务特征</text>
+<rect x="1260" y="270" width="184" height="68" rx="12" fill="#fff" stroke="#b8c8da" stroke-width="1.6"/>
+<text x="1352.0" y="304" font-size="22" font-weight="650" text-anchor="middle">检测头</text>
+<rect x="1260" y="437" width="184" height="68" rx="12" fill="#e6f5f1" stroke="#91cdbf" stroke-width="1.6"/>
+<text x="1352.0" y="471" font-size="22" font-weight="650" text-anchor="middle">掩码头</text>
+<rect x="1482" y="252" width="176" height="105" rx="12" fill="#fff" stroke="#b8c8da" stroke-width="1.6"/>
+<text x="1570.0" y="286" font-size="21" font-weight="650" text-anchor="middle">边界框 B</text>
+<text x="1570.0" y="318" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">粗粒度空间先验</text>
+<rect x="1482" y="419" width="176" height="105" rx="12" fill="#e6f5f1" stroke="#91cdbf" stroke-width="1.6"/>
+<text x="1570.0" y="453" font-size="21" font-weight="650" text-anchor="middle">像素掩码 M</text>
+<text x="1570.0" y="485" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">目标前景 / 背景</text>
+<text x="1539" y="563" font-size="19" font-weight="600" text-anchor="middle" style="fill:#218674">核心级联接口</text>
+<rect x="32" y="700" width="1656" height="281" rx="18" fill="#f6faf9" stroke="#b6d9ce" stroke-width="1.6"/>
+<text x="56" y="740" font-size="24" font-weight="700" text-anchor="start" style="fill:#218674">B  语义引导局部几何</text>
+<text x="593" y="740" font-size="22" font-weight="700" text-anchor="start" style="fill:#218674">SEMANTICS-GUIDED LOCAL GEOMETRY</text>
+<polyline points="1570,525 1570,662 421,662 421,779" fill="none" stroke="#218674" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="580" y="641" width="640" height="44" rx="8" fill="white" stroke="#91cdbf" stroke-width="1.6"/>
+<text x="900" y="671" font-size="18" font-weight="600" text-anchor="middle" style="fill:#218674">显式空间接口：M(u,v) → P_obj；不向三维网络注入语言特征</text>
+<polyline points="250,834 302,834" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="540,834 593,834" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="851,834 918,834" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1192,834 1240,834" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="1430,834 1482,834" fill="none" stroke="#64748b" stroke-width="2.4" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="56" y="779" width="194" height="127" rx="12" fill="#fff" stroke="#b8c8da" stroke-width="1.6"/>
+<text x="153.0" y="813" font-size="21" font-weight="650" text-anchor="middle">深度图 D + K</text>
+<text x="153.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">RGB-D 相机</text>
+<text x="153.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">相机内参</text>
+<rect x="302" y="779" width="238" height="127" rx="12" fill="#e6f5f1" stroke="#91cdbf" stroke-width="1.6"/>
+<text x="421.0" y="813" font-size="21" font-weight="650" text-anchor="middle">掩码裁剪 + 反投影</text>
+<text x="421.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">D_roi = D ⊙ M</text>
+<text x="421.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">保留有效目标深度</text>
+<rect x="593" y="779" width="258" height="127" rx="12" fill="#e6f5f1" stroke="#91cdbf" stroke-width="1.6"/>
+<text x="722.0" y="813" font-size="22" font-weight="650" text-anchor="middle">局部点云 P_obj</text>
+<text x="722.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">语义级背景抑制</text>
+<text x="722.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">采样至 12,000 点</text>
+<rect x="918" y="779" width="274" height="127" rx="12" fill="#fff4e5" stroke="#dfbe83" stroke-width="1.6"/>
+<text x="1055.0" y="813" font-size="22" font-weight="650" text-anchor="middle">FGC-GraspNet</text>
+<text x="1055.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">复用预训练权重</text>
+<text x="1055.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">物理约束下的候选位姿</text>
+<rect x="1240" y="779" width="190" height="127" rx="12" fill="#fff4e5" stroke="#dfbe83" stroke-width="1.6"/>
+<text x="1335.0" y="813" font-size="22" font-weight="650" text-anchor="middle">位姿筛选</text>
+<text x="1335.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">评分排序</text>
+<text x="1335.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">非极大值抑制</text>
+<rect x="1482" y="779" width="176" height="127" rx="12" fill="#fff4e5" stroke="#dfbe83" stroke-width="1.6"/>
+<text x="1570.0" y="813" font-size="21" font-weight="650" text-anchor="middle">最优 6-DoF</text>
+<text x="1570.0" y="845" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">旋转 R · 平移 t</text>
+<text x="1570.0" y="874" font-size="19" font-weight="400" text-anchor="middle" style="fill:#596b80">夹爪宽度 w</text>
+<text x="56" y="948" font-size="20" font-weight="400" text-anchor="start" style="fill:#596b80">几何网络专注于目标表面；定位误差仍可能沿掩码接口向后传播。</text>
+<text x="40" y="1026" font-size="20" font-weight="400" text-anchor="start" style="fill:#596b80">蓝：视觉特征     紫：语言特征     绿：语义空间接口     橙：几何推理与抓取输出</text>
+<text x="1680" y="1053" font-size="16" font-weight="400" text-anchor="end" style="fill:#596b80">依据论文图 1–4 与 §1 重绘 · 示意图，不代表新增实验</text>
+</svg>
